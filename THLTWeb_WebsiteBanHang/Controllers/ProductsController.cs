@@ -62,14 +62,32 @@ namespace THLTWeb_WebsiteBanHang.Controllers
             if (ModelState.IsValid)
             {
 
+                //if (imageUrl != null && imageUrl.Length > 0)
+                //{
+                //    product.ImageUrl = await SaveImage(imageUrl);
+                //}
+
+                //_context.Add(product);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
-                    product.ImageUrl = await SaveImage(imageUrl);
+                    try
+                    {
+                        product.ImageUrl = await SaveImage(imageUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("ImageUrl", ex.Message); 
+                    }
                 }
 
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid) 
+                {
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", product.CategoryId);
@@ -77,19 +95,22 @@ namespace THLTWeb_WebsiteBanHang.Controllers
         }
         private async Task<string> SaveImage(IFormFile image)
         {
+            var extension = Path.GetExtension(image.FileName).ToLower();
+            if (extension != ".png" && extension != ".jpeg" && extension != ".jpg")
+            {
+                throw new Exception("Định dạng hình ảnh không hợp lệ. Chỉ chấp nhận .png, .jpeg hoặc .jpg.");
+            }
+            else
+            {
+
             var savePath = Path.Combine("wwwroot/images", image.FileName);
             using (var fileStream = new FileStream(savePath, FileMode.Create))
             {
                 await image.CopyToAsync(fileStream);
             }
             return "/images/" + image.FileName;
-            //var uniqueFileName = Guid.NewGuid().ToString() + "_" + image.FileName;
-            //var savePath = Path.Combine("wwwroot/images", uniqueFileName);
-            //using (var fileStream = new FileStream(savePath, FileMode.Create))
-            //{
-            //    await image.CopyToAsync(fileStream);
-            //}
-            //return "/images/" + uniqueFileName;
+            }
+            
         }
 
         // GET: Products/Edit/5
@@ -125,8 +146,20 @@ namespace THLTWeb_WebsiteBanHang.Controllers
             {
                 try
                 {
+                    //if (imageUrl != null && imageUrl.Length > 0)
+                    //{
+                    //    try
+                    //    {
+                    //        product.ImageUrl = await SaveImage(imageUrl);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        ModelState.AddModelError("ImageUrl", ex.Message);
+                    //    }
+                    //}
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -187,5 +220,10 @@ namespace THLTWeb_WebsiteBanHang.Controllers
         {
           return (_context.Product?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        //public async Task<int> CountProductsByCategory(int categoryId)
+        //{
+        //    int count = await _context.Product.CountAsync(p => p.CategoryId == categoryId);
+        //    return count;
+        //}
     }
 }

@@ -35,6 +35,8 @@
             <div class="form-control">
                 <label asp-for="ImageUrl">Image</label>
                 <input type="file" asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
