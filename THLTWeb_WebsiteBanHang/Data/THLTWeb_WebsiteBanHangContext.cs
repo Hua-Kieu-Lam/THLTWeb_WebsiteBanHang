@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using THLTWeb_WebsiteBanHang.Models;
 
 namespace THLTWeb_WebsiteBanHang.Data
 {
-    public class THLTWeb_WebsiteBanHangContext : DbContext
+    public class THLTWeb_WebsiteBanHangContext : IdentityDbContext
     {
         public THLTWeb_WebsiteBanHangContext (DbContextOptions<THLTWeb_WebsiteBanHangContext> options)
             : base(options)
