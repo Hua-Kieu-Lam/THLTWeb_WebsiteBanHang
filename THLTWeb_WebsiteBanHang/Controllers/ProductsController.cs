@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -232,5 +233,6 @@ namespace THLTWeb_WebsiteBanHang.Controllers
         //    int count = await _context.Product.CountAsync(p => p.CategoryId == categoryId);
         //    return count;
         //}
+        
     }
 }

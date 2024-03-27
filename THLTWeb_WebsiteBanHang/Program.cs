@@ -2,21 +2,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using THLTWeb_WebsiteBanHang.Data;
+using THLTWeb_WebsiteBanHang.Models;
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<THLTWeb_WebsiteBanHangContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("THLTWeb_WebsiteBanHangContext") ?? throw new InvalidOperationException("Connection string 'THLTWeb_WebsiteBanHangContext' not found.")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-options.SignIn.RequireConfirmedAccount = true)
 
-.AddEntityFrameworkStores<THLTWeb_WebsiteBanHangContext>()
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 .AddDefaultTokenProviders()
-.AddDefaultUI();
-
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-//.AddDefaultTokenProviders()
-//.AddDefaultUI()
-//.AddEntityFrameworkStores<THLTWeb_WebsiteBanHangContext>();
+.AddDefaultUI()
+.AddEntityFrameworkStores<THLTWeb_WebsiteBanHangContext>();
 builder.Services.AddRazorPages();
 
 builder.Services.AddControllersWithViews();

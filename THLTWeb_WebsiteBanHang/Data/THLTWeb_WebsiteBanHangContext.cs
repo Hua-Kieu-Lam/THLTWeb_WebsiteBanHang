@@ -8,7 +8,7 @@ using THLTWeb_WebsiteBanHang.Models;
 
 namespace THLTWeb_WebsiteBanHang.Data
 {
-    public class THLTWeb_WebsiteBanHangContext : IdentityDbContext
+    public class THLTWeb_WebsiteBanHangContext : IdentityDbContext<ApplicationUser>
     {
         public THLTWeb_WebsiteBanHangContext (DbContextOptions<THLTWeb_WebsiteBanHangContext> options)
             : base(options)
