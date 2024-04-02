@@ -88,13 +88,16 @@
             </td>
 
         </tr> *@
-        <tr style="font-weight:bold; color:blue; text-align:right">
-            <td colspan="9" align="center">
-                <a asp-action="Order">
-                    Đặt hàng
-                </a>
-            </td>
-        </tr>
+        @if(Model.Any()){
+
+            <tr style="font-weight:bold; color:blue; text-align:right">
+                <td colspan="9" align="center">
+                    <a asp-action="Order">
+                        Đặt hàng
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 

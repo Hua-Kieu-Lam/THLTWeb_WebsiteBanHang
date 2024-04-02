@@ -12,10 +12,13 @@ namespace THLTWeb_WebsiteBanHang.Controllers
     {
         private readonly THLTWeb_WebsiteBanHangContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public ShoppingCartController(THLTWeb_WebsiteBanHangContext context, UserManager<ApplicationUser> userManager)
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public ShoppingCartController(THLTWeb_WebsiteBanHangContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         List<CartItem>? GetCartItems()
         {
@@ -35,22 +38,27 @@ namespace THLTWeb_WebsiteBanHang.Controllers
 
         }
 
-        public ActionResult AddToCart(int id)
+        public async Task<IActionResult> AddToCart(int id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             Product? itemProduct = _context.Product.FirstOrDefault(p => p.Id == id);
             if (itemProduct == null)
                 return BadRequest("Sản phẩm không tồn tại");
+            var user=  _userManager.GetUserAsync(User);
             var carts = GetCartItems();
             var findCartItem = carts.FirstOrDefault(p => p.Id.Equals(id));
             if (findCartItem == null)
             {
-                //Th thêm mới vào giỏ hàng
                 findCartItem = new CartItem()
                 {
                     Id = itemProduct.Id,
                     Name = itemProduct.Name,
                     Price = itemProduct.Price,
-                    Quantity = 1
+                    Quantity = 1,
+                    UserId = user.Id,
                 };
                 carts.Add(findCartItem);
             }
@@ -103,14 +111,21 @@ namespace THLTWeb_WebsiteBanHang.Controllers
                 };
                 _context.Order.Add(order);
                 await _context.SaveChangesAsync();
-                //xóa session giỏ hàng
-                //HttpContext.Session.Remove(CARTKEY);
+
+                HttpContext.Session.Remove("cart");
                 return View("OrderCompleted", order);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+        public async Task<IActionResult> Logout()
+        {
+            HttpContext.Session.Clear();
+
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Products");
         }
         // GET: ShoppingCartController
         public ActionResult Index()
