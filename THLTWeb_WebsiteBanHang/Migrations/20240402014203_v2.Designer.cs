@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using THLTWeb_WebsiteBanHang.Data;
 
@@ -11,9 +12,10 @@ using THLTWeb_WebsiteBanHang.Data;
 namespace THLTWeb_WebsiteBanHang.Migrations
 {
     [DbContext(typeof(THLTWeb_WebsiteBanHangContext))]
-    partial class THLTWeb_WebsiteBanHangContextModelSnapshot : ModelSnapshot
+    [Migration("20240402014203_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,11 +234,11 @@ namespace THLTWeb_WebsiteBanHang.Migrations
 
             modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.CartItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -248,7 +250,7 @@ namespace THLTWeb_WebsiteBanHang.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductId");
 
                     b.ToTable("CartItem");
                 });
@@ -269,62 +271,6 @@ namespace THLTWeb_WebsiteBanHang.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.OrderDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Product", b =>
@@ -382,6 +328,11 @@ namespace THLTWeb_WebsiteBanHang.Migrations
                     b.ToTable("ProductImage");
                 });
 
+            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.ShoppingCart", b =>
+                {
+                    b.ToTable("ShoppingCart");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -433,32 +384,6 @@ namespace THLTWeb_WebsiteBanHang.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Order", b =>
-                {
-                    b.HasOne("THLTWeb_WebsiteBanHang.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.OrderDetail", b =>
-                {
-                    b.HasOne("THLTWeb_WebsiteBanHang.Models.Order", null)
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("THLTWeb_WebsiteBanHang.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Product", b =>
                 {
                     b.HasOne("THLTWeb_WebsiteBanHang.Models.Category", "Category")
@@ -484,11 +409,6 @@ namespace THLTWeb_WebsiteBanHang.Migrations
             modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Category", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("THLTWeb_WebsiteBanHang.Models.Product", b =>
