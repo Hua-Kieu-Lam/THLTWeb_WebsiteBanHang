@@ -141,7 +141,7 @@ namespace THLTWeb_WebsiteBanHang.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description,ImageUrl,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description,ImageUrl,CategoryId")] Product product,IFormFile imageUrl)
         {
             if (id != product.Id)
             {
@@ -152,17 +152,17 @@ namespace THLTWeb_WebsiteBanHang.Controllers
             {
                 try
                 {
-                    //if (imageUrl != null && imageUrl.Length > 0)
-                    //{
-                    //    try
-                    //    {
-                    //        product.ImageUrl = await SaveImage(imageUrl);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        ModelState.AddModelError("ImageUrl", ex.Message);
-                    //    }
-                    //}
+                    if (imageUrl != null && imageUrl.Length > 0)
+                    {
+                        try
+                        {
+                            product.ImageUrl = await SaveImage(imageUrl);
+                        }
+                        catch (Exception ex)
+                        {
+                            ModelState.AddModelError("ImageUrl", ex.Message);
+                        }
+                    }
                     _context.Update(product);
                     await _context.SaveChangesAsync();
 

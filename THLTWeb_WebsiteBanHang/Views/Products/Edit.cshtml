@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -28,15 +28,12 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+           @*  <div class="form-group">
                 <label asp-for="ImageUrl" class="control-label"></label>
                 <input asp-for="ImageUrl" class="form-control" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            @* <div class="form-group">
-                <label asp-for="ImageUrl">Image</label>
-                <input type="file" asp-for="ImageUrl" class="form-control" />
             </div> *@
+             
             @* <div class="form-control">
                 <label asp-for="ImageUrl">Image</label>
                 <input type="file" asp-for="ImageUrl" class="form-control" />
@@ -48,6 +45,17 @@
                 <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
+            
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input type="file" asp-for="ImageUrl" class="form-control" id="imageInput" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="col-8">
+
+                <img src="@Model.ImageUrl" alt="Product Image" style="max-width:200px;" id="previewImage" />
+
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -58,3 +66,29 @@
 <div>
     <a asp-action="Index" class="btn btn-primary mt-1 mb-1">Back to List</a>
 </div>
+<script>
+
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+
+        input.addEventListener('change', function (event) {
+
+            const file = event.target.files[0];
+
+            if (file) {
+
+                const reader = new FileReader(); reader.onload = function (e) {
+
+                    const img = document.getElementById("previewImage")
+
+                    img.src = e.target.result
+
+                };
+
+                reader.readAsDataURL(file);
+
+            }
+
+        });
+
+    });
+</script>
