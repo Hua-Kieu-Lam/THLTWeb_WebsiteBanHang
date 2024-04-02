@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Globalization;
 using THLTWeb_WebsiteBanHang.Data;
 using THLTWeb_WebsiteBanHang.Models;
 
@@ -9,10 +11,11 @@ namespace THLTWeb_WebsiteBanHang.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly THLTWeb_WebsiteBanHangContext _context;
-
-        public ShoppingCartController(THLTWeb_WebsiteBanHangContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ShoppingCartController(THLTWeb_WebsiteBanHangContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         List<CartItem>? GetCartItems()
         {
@@ -78,6 +81,36 @@ namespace THLTWeb_WebsiteBanHang.Controllers
                 SaveCartSession(carts);
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Order()
+        {
+            try
+            {
+                var carts = GetCartItems();
+                var user = await _userManager.GetUserAsync(User);
+                var order = new Order
+                {
+                    UserId = user != null ? user.Id : null,
+                    OrderDate = DateTime.UtcNow,
+                    TotalPrice = carts.Sum(i => i.Price * i.Quantity),
+                    OrderDetails = carts.Select(item => new OrderDetail
+                    {
+                        ProductId = item.Id,
+                        Quantity = item.Quantity,
+                        Price = item.Price
+                    }).ToList()
+                };
+                _context.Order.Add(order);
+                await _context.SaveChangesAsync();
+                //xóa session giỏ hàng
+                //HttpContext.Session.Remove(CARTKEY);
+                return View("OrderCompleted", order);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         // GET: ShoppingCartController
         public ActionResult Index()
